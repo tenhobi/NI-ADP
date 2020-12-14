@@ -1,13 +1,14 @@
 package cz.cvut.fit.miadp.mvcgame.model;
 
 import cz.cvut.fit.miadp.mvcgame.command.AbstractGameCommand;
+import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsCollision;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.GameObject;
 import cz.cvut.fit.miadp.mvcgame.observer.IObservable;
 import cz.cvut.fit.miadp.mvcgame.strategy.IMovingStrategy;
 
 import java.util.List;
 
-public interface IGameModel extends IObservable {
+public interface IGameModel extends IObservable, IMissileHitCallback {
     void moveCannonUp();
 
     void moveCannonDown();
@@ -31,6 +32,8 @@ public interface IGameModel extends IObservable {
     void timeTick();
 
     List<GameObject> getGameObjects();
+
+    List<AbsCollision> getCollisions();
 
     IMovingStrategy getMovingStrategy();
 

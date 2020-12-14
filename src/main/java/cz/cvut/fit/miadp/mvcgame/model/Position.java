@@ -32,6 +32,4 @@ public class Position {
         this.setX(this.getX() + v.getDX());
         this.setY(this.getY() + v.getDY());
     }
-
-
 }

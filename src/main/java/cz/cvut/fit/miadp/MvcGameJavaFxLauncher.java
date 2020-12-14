@@ -6,13 +6,11 @@ import cz.cvut.fit.miadp.mvcgame.bridge.IGameGraphics;
 import cz.cvut.fit.miadp.mvcgame.bridge.JavaFxGraphics;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -45,37 +43,28 @@ public class MvcGameJavaFxLauncher extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         IGameGraphics gr = new GameGraphics(new JavaFxGraphics(gc));
 
-        ArrayList<String> pressedKeysCodes = new ArrayList<String>();
+        ArrayList<String> pressedKeysCodes = new ArrayList<>();
 
         theScene.setOnKeyPressed(
-                new EventHandler<KeyEvent>() {
-                    public void handle(KeyEvent e) {
-                        String code = e.getCode().toString();
+                e -> {
+                    String code = e.getCode().toString();
 
-                        // only add once... prevent duplicates
-                        if (!pressedKeysCodes.contains(code))
-                            pressedKeysCodes.add(code);
-                    }
+                    // only add once... prevent duplicates
+                    if (!pressedKeysCodes.contains(code))
+                        pressedKeysCodes.add(code);
                 }
         );
 
         theScene.setOnKeyReleased(
-                new EventHandler<KeyEvent>() {
-                    public void handle(KeyEvent e) {
-                        String code = e.getCode().toString();
-                        pressedKeysCodes.remove(code);
-                    }
+                e -> {
+                    String code = e.getCode().toString();
+                    pressedKeysCodes.remove(code);
                 }
         );
 
         // the game-loop
         new AnimationTimer() {
-            // long nextNanoTime = 0;
-
             public void handle(long currentNanoTime) {
-                // if(currentNanoTime < nextNanoTime) return;
-                // nextNanoTime = currentNanoTime + (1000000000/30);
-
                 theMvcGame.processPressedKeys(pressedKeysCodes);
                 pressedKeysCodes.clear();
                 theMvcGame.update();
@@ -89,5 +78,4 @@ public class MvcGameJavaFxLauncher extends Application {
     public static void main(String[] args) {
         launch();
     }
-
 }

@@ -5,9 +5,7 @@ import cz.cvut.fit.miadp.mvcgame.model.Position;
 import cz.cvut.fit.miadp.mvcgame.model.Vector;
 import cz.cvut.fit.miadp.mvcgame.visitor.IGameObjectsVisitor;
 
-// TODO: collisions
 public abstract class AbsEnemy extends GameObject {
-
     protected AbsEnemy(Position position) {
         this.position = position;
     }
@@ -27,5 +25,5 @@ public abstract class AbsEnemy extends GameObject {
         visitor.visitEnemy(this);
     }
 
-    public abstract void update();
+    public void update() {}
 }

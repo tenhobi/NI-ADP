@@ -27,7 +27,6 @@ public class GameModel implements IGameModel {
     private final IGameObjectFactory goFactA;
     private final IGameObjectFactory goFactB;
     private IMovingStrategy movingStrategy;
-    private int score;
 
     private final Queue<AbstractGameCommand> unexecutedCmds = new LinkedBlockingQueue<AbstractGameCommand>();
     private final Stack<AbstractGameCommand> executedCmds = new Stack<AbstractGameCommand>();
@@ -49,7 +48,6 @@ public class GameModel implements IGameModel {
         this.movingStrategy = new SimpleMovingStrategy();
         this.cannon = this.goFactA.createCannon();
         this.gameInfo = this.goFactA.createGameInfo(this.cannon);
-        this.score = 0;
 
         spawnEnemies();
         this.initTimer();
@@ -82,11 +80,18 @@ public class GameModel implements IGameModel {
     }
 
     public List<GameObject> getGameObjects() {
-        List<GameObject> go = new ArrayList<GameObject>(this.missiles);
+        List<GameObject> go = new ArrayList<GameObject>();
         go.add(this.cannon);
         go.add(this.gameInfo);
         go.addAll(this.enemies);
+        go.addAll(this.collisions);
+        go.addAll(this.missiles);
         return go;
+    }
+
+    @Override
+    public List<AbsCollision> getCollisions() {
+        return this.collisions;
     }
 
     public void enemyMoveTick() {
@@ -97,7 +102,7 @@ public class GameModel implements IGameModel {
         this.executeCmds();
         this.moveMissiles();
         this.destroyEnemies();
-        // TODO this.destroyCollisions();
+        this.destroyCollisions();
     }
 
     @Override
@@ -127,6 +132,17 @@ public class GameModel implements IGameModel {
         }
 
         this.enemies.removeAll(toRemove);
+    }
+
+    private void destroyCollisions() {
+        List<AbsCollision> toRemove = new ArrayList<>();
+        for (AbsCollision collision : this.collisions) {
+            if (collision.isExpired()) {
+                toRemove.add(collision);
+            }
+        }
+
+        this.collisions.removeAll(toRemove);
     }
 
     private void destroyMissiles() {
@@ -226,7 +242,7 @@ public class GameModel implements IGameModel {
         } else {
             enemy = this.goFactB.createEnemy(position);
         }
-        enemies.add(enemy);
+        this.enemies.add(enemy);
     }
 
     public void registerCommand(AbstractGameCommand cmd) {
@@ -248,6 +264,21 @@ public class GameModel implements IGameModel {
             cmd.doExecute();
             this.executedCmds.push(cmd);
         }
+    }
+
+    @Override
+    public List<AbsEnemy> getEnemiesToCheckHit() {
+        return this.enemies;
+    }
+
+    @Override
+    public void hit(AbsEnemy enemy) {
+        this.collisions.add(goFactA.createCollision(enemy.getPosition()));
+        this.enemies.remove(enemy);
+        this.soundManager.playExplosion();
+        this.spawnEnemy();
+        this.gameInfo.updateScore(this.gameInfo.getScore() + 1);
+        this.notifyObservers();
     }
 
     private class Memento {

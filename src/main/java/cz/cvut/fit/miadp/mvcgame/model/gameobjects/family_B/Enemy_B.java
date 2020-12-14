@@ -9,6 +9,4 @@ public class Enemy_B extends AbsEnemy {
     public Enemy_B(Position position) {
         super(position);
     }
-
-    public void update() {}
 }

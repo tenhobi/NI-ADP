@@ -3,6 +3,8 @@ package cz.cvut.fit.miadp.mvcgame.proxy;
 import cz.cvut.fit.miadp.mvcgame.command.AbstractGameCommand;
 import cz.cvut.fit.miadp.mvcgame.model.IGameModel;
 import cz.cvut.fit.miadp.mvcgame.model.Position;
+import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsCollision;
+import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsEnemy;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.GameObject;
 import cz.cvut.fit.miadp.mvcgame.observer.IObserver;
 import cz.cvut.fit.miadp.mvcgame.strategy.IMovingStrategy;
@@ -92,6 +94,11 @@ public class GameModelProxy implements IGameModel {
     }
 
     @Override
+    public List<AbsCollision> getCollisions() {
+        return this.subject.getCollisions();
+    }
+
+    @Override
     public IMovingStrategy getMovingStrategy() {
         return this.subject.getMovingStrategy();
     }
@@ -119,5 +126,15 @@ public class GameModelProxy implements IGameModel {
     @Override
     public void undoLastCommand() {
         this.subject.undoLastCommand();
+    }
+
+    @Override
+    public List<AbsEnemy> getEnemiesToCheckHit() {
+        return this.subject.getEnemiesToCheckHit();
+    }
+
+    @Override
+    public void hit(AbsEnemy enemy) {
+        this.subject.hit(enemy);
     }
 }

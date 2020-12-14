@@ -5,11 +5,17 @@ import cz.cvut.fit.miadp.mvcgame.model.IGameModel;
 import java.util.List;
 
 public abstract class IHandler {
-    public IHandler nextHandler;
+    private IHandler next;
 
-    public IHandler(IHandler nextHandler) {
-        this.nextHandler = nextHandler;
+    public void setNext(IHandler nextChain) {
+        this.next = nextChain;
     }
 
-    public abstract boolean process(List<String> pressedKeysCodes, IGameModel model);
+    public abstract void handle(List<String> pressedKeysCodes, IGameModel model);
+
+    protected void handleByNext(List<String> pressedKeysCodes, IGameModel model) {
+        if (this.next != null) {
+            this.next.handle(pressedKeysCodes, model);
+        }
+    }
 }
